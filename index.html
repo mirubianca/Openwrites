@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Momente de liniște - Jurnal</title>
+
+  <script>
+    if (localStorage.getItem("tema") === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Quicksand', sans-serif;
+      margin: 0; padding: 0;
+      background: linear-gradient(to bottom right, #fff0f5, #e6f0ff);
+      color: #333;
+      transition: background-color 0.5s, color 0.5s;
+      min-height: 100vh;
+    }
+    nav {
+      background-color: #b66d9c;
+      padding: 15px; 
+      text-align: center; 
+      position: sticky; 
+      top: 0; 
+      z-index: 10;
+    }
+    nav a {
+      color: white; 
+      text-decoration: none; 
+      margin: 0 15px; 
+      font-weight: bold; 
+      transition: color 0.3s;
+    }
+    nav a:hover { 
+      color: #ffe0f0; 
+    }
+    .container {
+      max-width: 1000px; 
+      margin: 0 auto; 
+      padding: 40px 20px;
+      background-color: #ffffffcc;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-top: 40px;
+      position: relative;
+      transition: background-color 0.5s, color 0.5s;
+    }
+    #dateNow {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #4a1f3f;
+      font-weight: 600;
+      font-size: 1em;
+    }
+    h1 { 
+      text-align: center; 
+      color: #b66d9c; 
+      font-size: 2em; 
+      margin-bottom: 20px; 
+    }
+    textarea {
+      width: 100%; 
+      height: 250px; 
+      padding: 15px; 
+      font-size: 1em;
+      margin-top: 10px; 
+      border-radius: 8px; 
+      border: 1px solid #ccc;
+      background-color: #f9f9f9; 
+      resize: vertical;
+      font-family: inherit;
+      transition: background-color 0.5s, color 0.5s;
+    }
+    .buttons { 
+      margin-top: 15px; 
+    }
+    button, select {
+      padding: 10px 20px; 
+      font-size: 1em; 
+      background-color: #b66d9c;
+      color: white; 
+      border: none; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      margin-right: 10px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover, select:hover { 
+      background-color: #9a4d81; 
+    }
+    #charCount {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #b66d9c;
+    }
+    #themeToggle {
+      float: right;
+      margin-top: -50px;
+      margin-right: 10px;
+      font-size: 0.9em;
+      padding: 5px 10px;
+      background-color: #4a1f3f;
+    }
+    #fontSelect {
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5em; }
+      textarea { height: 200px; }
+      nav a { display: block; margin: 10px 0; }
+      #themeToggle {
+        float: none;
+        margin: 10px auto;
+        display: block;
+      }
+      #dateNow {
+        position: static;
+        text-align: right;
+        margin-bottom: 10px;
+      }
+    }
+
+    html.dark body {
+      background: #1a1a1a;
+      color: #ddd;
+    }
+    html.dark .container {
+      background-color: #333333cc;
+      color: #ddd;
+    }
+    html.dark textarea {
+      background-color: #555;
+      color: #eee;
+      border-color: #777;
+    }
+    html.dark button, html.dark select {
+      background-color: #5a2a5a;
+    }
+    html.dark button:hover, html.dark select:hover {
+      background-color: #7a3a7a;
+    }
+    html.dark nav {
+      background-color: #5a2a5a;
+    }
+    html.dark nav a:hover {
+      color: #f4c2f4;
+    }
+    html.dark #dateNow {
+      color: #f4c2f4;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="site.html">Jurnalul meu</a>
+    <a href="carti.html">Cărți</a>
+  </nav>
+
+  <div class="container">
+    <div id="dateNow"></div>
+
+    <h1>-Momente de liniste-</h1>
+    <p>Salut, dragi suflete! Acest site este dedicat inimilor care bat pentru arta de a crea poezii, povesti, jurnale si tot ceea ce le indruma sufletul.
+       In acest minunat taram, va puteti exprima: sentimentele, emotiile, ideile, sub forma scrisului.</p>
+
+    <h2>My tiny peaceful place</h2>
+
+    <label for="fontSelect">Alege font:</label>
+    <select id="fontSelect">
+      <option value="'Quicksand', sans-serif" selected>Quicksand</option>
+      <option value="Arial, sans-serif">Arial</option>
+      <option value="'Courier New', monospace">Courier New</option>
+      <option value="Georgia, serif">Georgia</option>
+    </select>
+
+    <button id="themeToggle">Tema Întunecată</button>
+
+    <textarea id="jurnalText" placeholder="Scrie-ți gândurile aici..."></textarea>
+    <div id="charCount">Caractere: 0</div>
+
+    <div class="buttons">
+      <button onclick="salveaza()">Salvează</button>
+      <button onclick="sterge()">Șterge</button>
+      <button onclick="exportText()">Exportă text</button>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById("jurnalText");
+    const charCount = document.getElementById("charCount");
+    const dateNow = document.getElementById("dateNow");
+    const themeToggle = document.getElementById("themeToggle");
+    const fontSelect = document.getElementById("fontSelect");
+
+    function afiseazaData() {
+      const azi = new Date();
+      const dataFormatata = azi.toLocaleDateString('ro-RO', {weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit'});
+      dateNow.textContent = dataFormatata;
+    }
+    afiseazaData();
+
+    textarea.addEventListener("input", () => {
+      charCount.textContent = "Caractere: " + textarea.value.length;
+      autoSave();
+    });
+
+    function salveaza() {
+      localStorage.setItem("jurnalComplet", textarea.value);
+      alert("Gândurile tale au fost salvate!🪄");
+    }
+
+    function sterge() {
+      if (confirm("Ești sigur(ă) că vrei să ștergi tot textul?")) {
+        textarea.value = "";
+        localStorage.removeItem("jurnalComplet");
+        charCount.textContent = "Caractere: 0";
+      }
+    }
+
+    let timer;
+    function autoSave() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        localStorage.setItem("jurnalComplet", textarea.value);
+      }, 2000);
+    }
+
+    window.onload = () => {
+      const textSalvat = localStorage.getItem("jurnalComplet");
+      if (textSalvat) {
+        textarea.value = textSalvat;
+        charCount.textContent = "Caractere: " + textSalvat.length;
+      }
+
+      const fontSalvat = localStorage.getItem("fontFamilie");
+      if (fontSalvat) {
+        fontSelect.value = fontSalvat;
+        textarea.style.fontFamily = fontSalvat;
+      }
+
+      if (localStorage.getItem("tema") === "dark") {
+        themeToggle.textContent = "Tema Luminoasă";
+      } else {
+        themeToggle.textContent = "Tema Întunecată";
+      }
+    };
+
+    themeToggle.addEventListener("click", () => {
+      if (document.documentElement.classList.contains("dark")) {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("tema", "light");
+        themeToggle.textContent = "Tema Întunecată";
+      } else {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("tema", "dark");
+        themeToggle.textContent = "Tema Luminoasă";
+      }
+    });
+
+    fontSelect.addEventListener("change", () => {
+      textarea.style.fontFamily = fontSelect.value;
+      localStorage.setItem("fontFamilie", fontSelect.value);
+    });
+
+    function exportText() {
+      const text = textarea.value;
+      const blob = new Blob([text], {type: "text/plain"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "jurnal.txt";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lista de Cărți</title>
+
+  <script>
+    if (localStorage.getItem("tema") === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Quicksand', sans-serif;
+      margin: 0; 
+      padding: 0;
+      background: linear-gradient(to bottom right, #fff0f5, #e6f0ff);
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    html.dark body {
+      background: #1a1a1a;
+      color: #ddd;
+    }
+
+    nav {
+      background-color: #b66d9c;
+      padding: 15px; 
+      text-align: center; 
+      position: sticky; 
+      top: 0; 
+      z-index: 10;
+    }
+
+    html.dark nav {
+      background-color: #5a2a5a;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none; 
+      margin: 0 15px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover { 
+      color: #ffe0f0; 
+    }
+
+    html.dark nav a:hover {
+      color: #f4c2f4;
+    }
+
+    .page-wrapper {
+      display: flex;
+      max-width: 900px;
+      margin: 40px auto 40px auto;
+      gap: 30px;
+      align-items: stretch;
+    }
+
+    .container {
+      max-width: 700px; 
+      padding: 20px;
+      background-color: #ffffffcc; 
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: background-color 0.3s, color 0.3s;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    html.dark .container {
+      background-color: #333333cc;
+      color: #ddd;
+    }
+
+    h1 {
+      text-align: center;
+      color: #b66d9c;
+      margin-bottom: 30px;
+    }
+
+    html.dark h1 {
+      color: #f4c2f4;
+    }
+
+    #searchInput, #authorFilter, #sortBtn {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 2px solid #b66d9c;
+      border-radius: 8px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    html.dark #searchInput,
+    html.dark #authorFilter {
+      background-color: #555;
+      color: #eee;
+      border-color: #777;
+    }
+
+    #sortBtn {
+      cursor: pointer;
+      background-color: #b66d9c;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+
+    #sortBtn:hover {
+      background-color: #954b7c;
+    }
+
+    html.dark #sortBtn {
+      background-color: #5a2a5a;
+    }
+
+    html.dark #sortBtn:hover {
+      background-color: #7a3a7a;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 10px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    ul li {
+      background: #f0d6e7;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    ul li:hover {
+      background: #d8a5c4;
+    }
+
+    html.dark ul li {
+      background: #4a1f3f;
+      color: #eee;
+    }
+
+    html.dark ul li:hover {
+      background: #6c2f5e;
+    }
+
+    ul li a {
+      color: #4a1f3f;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1.2em;
+      display: block;
+    }
+
+    html.dark ul li a {
+      color: #f4c2f4;
+    }
+
+    #noResults {
+      color: #b66d9c;
+      font-style: italic;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    html.dark #noResults {
+      color: #f4c2f4;
+    }
+
+    #countResults {
+      text-align: center;
+      color: #4a1f3f;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    html.dark #countResults {
+      color: #f4c2f4;
+    }
+
+    @media (max-width: 600px) {
+      ul li a { font-size: 1em; }
+      .page-wrapper {
+        flex-direction: column;
+        max-width: 100%;
+        margin: 20px;
+      }
+    }
+
+    #topBtn {
+      display: none; 
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 10px 15px;
+      background: #b66d9c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    #topBtn:hover {
+      background-color: #954b7c;
+    }
+
+    html.dark #topBtn {
+      background-color: #5a2a5a;
+    }
+
+    html.dark #topBtn:hover {
+      background-color: #7a3a7a;
+    }
+
+    #aboutMe {
+      max-width: 350px;
+      background-color: #ffffffcc;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: background-color 0.3s, color 0.3s;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    html.dark #aboutMe {
+      background-color: #333333cc;
+      color: #ddd;
+    }
+
+    #aboutMe h2 {
+      color: #b66d9c;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    #aboutMe p {
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    #aboutMe .photos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    #aboutMe .photos img {
+      width: 90px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      border: 1px solid #b66d9c;
+      transition: transform 0.3s;
+    }
+
+    #aboutMe .photos img:hover {
+      transform: scale(1.1);
+      border-color: #954b7c;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a href="index.html">Jurnalul meu</a>
+    <a href="carti.html">Cărți</a>
+  </nav>
+
+  <div class="page-wrapper">
+    <div class="container">
+      <h1>Lista de Cărți</h1>
+
+      <input type="text" id="searchInput" placeholder="Caută o carte..." />
+
+      <select id="authorFilter">
+        <option value="">Toți autorii</option>
+        <option value="Feodor Dostoievski">Feodor Dostoievski</option>
+        <option value="Franz Kafka">Franz Kafka</option>
+      </select>
+
+      <button id="sortBtn">Sortează A → Z</button>
+
+      <ul id="bookList">
+        <li><a href="nopti-albe.html">,,Nopti albe" de Feodor Dostoievski</a></li>
+        <li><a href="metamorfoza.html">,,Metamorfoza" de Franz Kafka</a></li>
+      </ul>
+
+      <div id="noResults" style="display:none;">Nicio carte găsită.</div>
+      <div id="countResults"></div>
+    </div>
+
+    <div id="aboutMe">
+      <h2>Cuvinte care ating sufletul🦋🫧</h2>
+      <p>,,Unele carti trebuie gustate,<br>
+        altele sunt inghitite,<br>
+        doar cateva sunt mestecate<br>
+        si de tot mistuite." - ,,Inima de cerneala" scrisa de Cornelia Funke</p>
+        <p>Cartea mea preferata pe luna aceasta🧸:</p>
+  
+      <div class="photos">
+        <img src="https://cdn4.libris.ro/img/pozeprod/35686/35685321-1.jpg" alt="Nopti albe" /> 
+      </div>
+      <p></p>
+    </div>
+  </div>
+
+  
+
+  <button id="topBtn" onclick="window.scrollTo(0, 0)">Sus ↑</button>
+
+
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const authorFilter = document.getElementById("authorFilter");
+    const sortBtn = document.getElementById("sortBtn");
+    const bookList = document.getElementById("bookList");
+    const noResults = document.getElementById("noResults");
+    const countResults = document.getElementById("countResults");
+
+    let sortAsc = true; 
+
+    function filterAndDisplay() {
+      const searchText = searchInput.value.toLowerCase();
+      const selectedAuthor = authorFilter.value.toLowerCase();
+      let visibleCount = 0;
+
+      const items = Array.from(bookList.querySelectorAll("li"));
+
+      items.forEach(li => {
+        const text = li.textContent.toLowerCase();
+        const authorMatch = li.textContent.match(/de (.+)$/);
+        const author = authorMatch ? authorMatch[1].toLowerCase() : "";
+
+        if(text.includes(searchText) && (selectedAuthor === "" || author === selectedAuthor)) {
+          li.style.display = "block";
+          visibleCount++;
+        } else {
+          li.style.display = "none";
+        }
+      });
+
+      noResults.style.display = visibleCount === 0 ? "block" : "none";
+      countResults.textContent = `Afișate ${visibleCount} cărți din ${items.length}.`;
+    }
+
+    function sortList() {
+      const items = Array.from(bookList.querySelectorAll("li"));
+      items.sort((a, b) => {
+        const textA = a.textContent.toLowerCase();
+        const textB = b.textContent.toLowerCase();
+        return sortAsc ? textA.localeCompare(textB) : textB.localeCompare(textA);
+      });
+
+      items.forEach(item => bookList.appendChild(item));
+      sortBtn.textContent = sortAsc ? "Sortează Z → A" : "Sortează A → Z";
+      sortAsc = !sortAsc;
+    }
+
+    searchInput.addEventListener("keyup", filterAndDisplay);
+    authorFilter.addEventListener("change", filterAndDisplay);
+    sortBtn.addEventListener("click", () => {
+      sortList();
+      filterAndDisplay();
+    });
+
+    filterAndDisplay();
+
+    const topBtn = document.getElementById("topBtn");
+    window.onscroll = function() {
+      if (window.scrollY > 100) {
+        topBtn.style.display = "block";
+      } else {
+        topBtn.style.display = "none";
+      }
+    };
+  </script>
+   <footer style="text-align: center; padding: 20px; background-color: #f5e6f0; color: #4a1f3f; margin-top: 40px;">
+    <p><strong>Miru Bianca Alexandra</strong></p>
+    <p>Email: <a href="mirubianca9@gmail.com" style="color: #4a1f3f;">mirubianca9@gmail.com</a></p>
+    <p><em>Cartile= Tinuturile unde cuvintele prind viata.📖💫</em></p>
+  </footer>
+</body>
+</html>
